@@ -396,7 +396,7 @@ namespace Projekt_bazy
                 textBox2.Visible = true;
                 isFirstClickButton9 = false;
                 button10.Enabled = false;
-                button4.Enabled = false;
+                button2.Enabled = false;
                 button5.Enabled = false;
                 return;
             }
@@ -433,7 +433,7 @@ namespace Projekt_bazy
                     }
                 }
                 isFirstClickButton9 = true;
-                button4.Enabled = true;
+                button2.Enabled = true;
                 button5.Enabled = true;
             }
         }
@@ -449,7 +449,7 @@ namespace Projekt_bazy
                 textBox2.Visible = true;
                 isFirstClickButton10 = false;
                 button9.Enabled = false;
-                button4.Enabled = false;
+                button2.Enabled = false;
                 button5.Enabled = false;
                 return;
             }
@@ -503,7 +503,7 @@ namespace Projekt_bazy
                     MessageBox.Show("Operacja usuniccia ekipy zostala anulowana.");
                 }
                 isFirstClickButton10 = true;
-                button4.Enabled = true;
+                button2.Enabled = true;
                 button5.Enabled = true;
             }
         }
@@ -577,30 +577,33 @@ namespace Projekt_bazy
 
         private void dataGridView1_CellValueChanged(object sender, DataGridViewCellEventArgs e)
         {
-            if (e.RowIndex >= 0 && e.ColumnIndex >= 0)
+            if (!isFirstClickButton11)
             {
-                DataGridView dataGridView = (DataGridView)sender;
-                DataGridViewRow row = dataGridView.Rows[e.RowIndex];
-
-                int id = Convert.ToInt32(row.Cells["id"].Value);
-                bool isChecked = Convert.ToBoolean(row.Cells["zworcono"].Value);
-
-                // Aktualizacja wartości w bazie danych
-                string connString = SSHConnectionManager.GetConnectionString();
-                using (var conn = new NpgsqlConnection(connString))
+                if (e.RowIndex >= 0 && e.ColumnIndex >= 0)
                 {
-                    conn.Open();
+                    DataGridView dataGridView = (DataGridView)sender;
+                    DataGridViewRow row = dataGridView.Rows[e.RowIndex];
 
-                    string updateQuery = $"UPDATE wyslanezestawy SET zworcono = {isChecked} WHERE id = {id};";
-                    using (var cmd = new NpgsqlCommand(updateQuery, conn))
+                    int id = Convert.ToInt32(row.Cells["id"].Value);
+                    bool isChecked = Convert.ToBoolean(row.Cells["zworcono"].Value);
+
+                    // Aktualizacja wartości w bazie danych
+                    string connString = SSHConnectionManager.GetConnectionString();
+                    using (var conn = new NpgsqlConnection(connString))
                     {
-                        int rowsAffected = cmd.ExecuteNonQuery();
+                        conn.Open();
 
-                        if (rowsAffected > 0)
+                        string updateQuery = $"UPDATE wyslanezestawy SET zworcono = {isChecked} WHERE id = {id};";
+                        using (var cmd = new NpgsqlCommand(updateQuery, conn))
                         {
-                            // Zaktualizuj wartość w DataGridView
-                            DataGridViewCheckBoxCell checkBoxCell = row.Cells["zworcono"] as DataGridViewCheckBoxCell;
-                            checkBoxCell.Value = isChecked;
+                            int rowsAffected = cmd.ExecuteNonQuery();
+
+                            if (rowsAffected > 0)
+                            {
+                                // Zaktualizuj wartość w DataGridView
+                                DataGridViewCheckBoxCell checkBoxCell = row.Cells["zworcono"] as DataGridViewCheckBoxCell;
+                                checkBoxCell.Value = isChecked;
+                            }
                         }
                     }
                 }
